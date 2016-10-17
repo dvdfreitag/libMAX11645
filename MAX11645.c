@@ -3,13 +3,13 @@
 #include "MAX11645.h"
 #include "TWI.h"
 
-#define MAX11645_ADDRESS		0x6C
+#define MAX11645_ADDRESS		0x6CU
 // Setup byte
-#define MAX11645_SETUP			0x80
+#define MAX11645_SETUP			0x80U
 // Configuration byte
-#define MAX11645_CONFIG			0x00
+#define MAX11645_CONFIG			0x00U
 // Channels
-#define MAX11645_MAX_CHANNELS	2
+#define MAX11645_MAX_CHANNELS	0x02U
 
 TWI_t *TWI;
 uint8_t Setup;
@@ -90,7 +90,7 @@ uint8_t MAX11645_Read(uint16_t *value)
 	TWI_Start(TWI);
 
 	if (TWI_WriteByte(MAX11645_ADDRESS | 0x01) != TWI_ACK) goto error;
-	*value = (uint16_t)(TWI_ReadByte(TWI_ACK) << 8);
+	*value = ((uint16_t)TWI_ReadByte(TWI_ACK)) << 8;
 	*value |= (uint16_t)TWI_ReadByte(TWI_ACK);
 
 	TWI_Stop();
