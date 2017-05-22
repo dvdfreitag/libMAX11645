@@ -31,11 +31,11 @@ uint8_t MAX11645_SetSetup(uint8_t setup)
 	if (TWI_WriteByte(MAX11645_ADDRESS) != TWI_ACK) goto error;
 	if (TWI_WriteByte(Setup) != TWI_ACK) goto error;
 
-	TWI_Stop();
+	TWI_Stop(TWI_ACK);
 	return TWI_ACK;
 
 error:
-	TWI_Stop();
+	TWI_Stop(TWI_NACK);
 	return TWI_NACK;
 }
 
@@ -53,11 +53,11 @@ uint8_t MAX11645_SetConfig(uint8_t config)
 	if (TWI_WriteByte(MAX11645_ADDRESS) != TWI_ACK) goto error;
 	if (TWI_WriteByte(Config) != TWI_ACK) goto error;
 
-	TWI_Stop();
+	TWI_Stop(TWI_ACK);
 	return TWI_ACK;
 
 error:
-	TWI_Stop();
+	TWI_Stop(TWI_NACK);
 	return TWI_NACK;
 }
 
@@ -77,11 +77,11 @@ uint8_t MAX11645_Configure(uint8_t setup, uint8_t config)
 	if (TWI_WriteByte(Setup) != TWI_ACK) goto error;
 	if (TWI_WriteByte(Config) != TWI_ACK) goto error;
 
-	TWI_Stop();
+	TWI_Stop(TWI_ACK);
 	return TWI_ACK;
 
 error:
-	TWI_Stop();
+	TWI_Stop(TWI_NACK);
 	return TWI_NACK;
 }
 
@@ -90,14 +90,14 @@ uint8_t MAX11645_Read(uint16_t *value)
 	TWI_Start(TWI);
 
 	if (TWI_WriteByte(MAX11645_ADDRESS | 0x01) != TWI_ACK) goto error;
-	*value = ((uint16_t)TWI_ReadByte(TWI_ACK)) << 8;
-	*value |= (uint16_t)TWI_ReadByte(TWI_ACK);
+	*value = ((uint16_t)TWI_ReadByte(TWI_ACK) & 0x0F) << 8;
+	*value |= (uint16_t)TWI_ReadByte(TWI_NACK);
 
-	TWI_Stop();
+	TWI_Stop(TWI_ACK);
 	return TWI_ACK;
 
 error:
-	TWI_Stop();
+	TWI_Stop(TWI_NACK);
 	return TWI_NACK;
 }
 
@@ -136,11 +136,11 @@ uint8_t MAX11645_ReadScan(uint16_t *buffer, uint8_t length)
 		if (((i % count) == 0) && (i != (length - 1))) TWI_Restart();
 	}
 
-	TWI_Stop();
+	TWI_Stop(TWI_ACK);
 	return TWI_ACK;
 
 error:
-	TWI_Stop();
+	TWI_Stop(TWI_NACK);
 	return TWI_NACK;
 }
 
@@ -151,10 +151,10 @@ uint8_t MAX11645_Reset()
 	if (TWI_WriteByte(MAX11645_ADDRESS) != TWI_ACK) goto error;
 	if (TWI_WriteByte(Setup & ~MAX11645_RESET) != TWI_ACK) goto error;
 
-	TWI_Stop();
+	TWI_Stop(TWI_ACK);
 	return TWI_ACK;
 
 error:
-	TWI_Stop();
+	TWI_Stop(TWI_NACK);
 	return TWI_NACK;
 }
